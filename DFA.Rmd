@@ -74,7 +74,7 @@ Table of average values for each of our variables by group. Useful for determini
 ####Coefficients of linear discriminants:
 Coefficients of the discriminant function. There will be # of groups - 1 linear discriminants. Here we have 5 groups so we'll have 4 linear discriminants. 
 ####Proportion of trace:
-The proportion of trace shows the proportion of variance in our data explained by the linear discriminants. In our example here, 94.31% of our variance is explained by LD1
+The proportion of trace shows the proportion of variance between our groups explained by the linear discriminants.
 
 
 
@@ -84,23 +84,23 @@ The predict() function allows us to check how successfully the linear function w
 ```{r}
 camel.p <- predict(camel.lda)
 camel.p
-
 ```
 ####Class:
-The first output here shows how our data were classified in our original data set
+The first output here shows how our data are classified based on our LDA model  
 
 ####Posterior:
-The posterior probabilities shows the probability of each sample being classified within one group over another. These probabilities measure the strength of each classification. If one is much greater than the others, that sample is assigned to that group with a high degree of confidence.
-Here, many of these probabilities are high so these data are confidently assigned to groups.
+The posterior probabilities shows the probability of each sample being classified in one group over another. These probabilities measure the strength of each classification. If one is substantially greater than the others, that sample is assigned to that group with a high degree of confidence.
+Here, many of these probabilities are high so these data are confidently assigned to these groups.
 
 ####x:
 This last part shows the discriminant function axis scores for each sample. These scores can be plotted to show distribution of our samples.
 
 
-###There are a number of ways to visualize these LD# scores
-A simple way to do this is to use the ggord() function in the {ggord} package to plot our model.
-  *Super easy to use.
-  *A spin-off of ggplot and we all love ggplot so you might like this.
+###There are a number of ways to visualize these discriminant scores
+A simple way to do this is to use the ggord() function in the {ggord} package to plot our model.  
+Why use this package over others?  
+  1) *Super easy to use.*  
+  2) A spin-off of ggplot and we all love ggplot so you might like this, too.  
 ```{r}
 library(ggplot2)
 library(devtools)
@@ -108,15 +108,13 @@ install_github('fawda123/ggord')
 #check out https://github.com/fawda123/ggord/blob/master/R/ggord.R to view original code for this package
 library(ggord)
 ```
-At it's base level, ggord() is pretty good. 
-[check it out if you want to learn more](https://beckmw.wordpress.com/2015/05/14/reinventing-the-wheel-for-ordination-biplots-with-ggplot2/#comments)  
+At it's base level, ggord() is pretty good.  
+[Check our this blog post if you want to learn more about what ggord can do.](https://beckmw.wordpress.com/2015/05/14/reinventing-the-wheel-for-ordination-biplots-with-ggplot2/#comments)  
 ```{r}
 ggord(camel.lda,camels$Genus..2.)
-
 ```
-[^.]  
-But our data points are little big, and it's difficult to tell how our variables are influencing our data so we'll mess around with it a little bit.  
-The ggord default function is a little particular so if you want to use this package to make your own plots, you should check out the raw code [raw code](https://github.com/fawda123/ggord/blob/master/R/ggord.R) for the default ggord() plot to see the easiest way to customize the code.   
+But our data points are little big, and it's difficult to tell how our variables are influencing our data so we'll mess around with this plot a little bit.  
+The ggord default function is a little particular so if you want to use this package to make your own plots, you should check out the [raw code](https://github.com/fawda123/ggord/blob/master/R/ggord.R) for the default ggord() plot to see the easiest way to customize the code.  
 ```{r}
 p<-ggord(camel.lda, camels$Genus..2., txt=3, vec_ext=6, size=1 ) #adjusting text size, vector length, and size of the points
 p+ ggtitle("DFA of Davis & McHorse 2013 Camelid data") + #adding a title
@@ -124,7 +122,6 @@ p+ ggtitle("DFA of Davis & McHorse 2013 Camelid data") + #adding a title
   scale_color_brewer(palette="Dark2") + #changing the palette
      theme_minimal() #adding a minimal theme because I like it more 
 ```
-
 ###How does this compare to a PCA plot?  
 ```{r}
 library(FactoMineR) #add the package with PCA() to our library
@@ -136,9 +133,8 @@ There is more overlap between groups in our PCA plot than in our DFA plot. This 
 
   
 ###Another nice way to visualize this data is by using the [{plotly}](https://cran.r-project.org/web/packages/plotly/index.html) package.    
-Allows us to look at 3 LD scores at the same time  
-The [plotly package](https://plot.ly/r/3d-scatter-plots/) rocks and has very cool interactive visualizations  
-
+Allows us to look at 3 discriminant scores at the same time  
+**Also** The [plotly package](https://plot.ly/r/3d-scatter-plots/) rocks and has [very cool](https://plot.ly/javascript/) interactive visualizations and [an online interactive plot making tool](https://plot.ly/create/)  
 ```{r}
 library(plotly)
 p<-plot_ly(camels, x=camel.p$x[,1], y=camel.p$x[,2], z=camel.p$x[,3]) %>% #indicate what your axes are
