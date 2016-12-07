@@ -7,9 +7,11 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+captions=TRUE
 ```
 #**DISCRIMINANT FUNCTION ANALYSIS**
 [The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA)  
+
 #INTRODUCTION  
 
 ![](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
@@ -21,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 *"Bootstraps bootstraps"* - The scene in Pirates of the Caribbean, the movie about statistics on the high seas, where William Turner learns about a common resampling method - bootstrapping.  
 
 ![ ](http://images4.fanpop.com/image/photos/24200000/Will-Turner-3-will-turner-24273475-500-208.gif)  
-*"No not that knife, Will!"* - The scene in Pirates of the Caribbean where the Professor Jack Sparrow, our swashbuckling statistician, teaches young William Turner about another common resampling method - jackknifing. 
+*"No, not that knife, Will!"* - The scene in Pirates of the Caribbean where Professor Jack Sparrow, the swashbuckling statistician, teaches young William Turner about another common resampling method - jackknifing. 
 
 
 
@@ -32,7 +34,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ##Davis and McHorse, 2013  
 ###Palaeontologia Electronica  
 [Link to the article](http://palaeo-electronica.org/content/2013/539-discriminant-id-of-postcrania)  
-###A method for improved identification of postrcania from mammalian fossil assemblages: multivariate discriminant function analysis of camelid astragali.  
+
+###A method for improved identification of postcrania from mammalian fossil assemblages: multivariate discriminant function analysis of camelid astragali.  
 ![Aepycamelus, one of these North American camelids](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Aepycamelus_Alticamelus_hharder.jpg/250px-Aepycamelus_Alticamelus_hharder.jpg)  
 
 
@@ -65,14 +68,19 @@ camel.lda
 ```
   
 ###Displayed in this output  
+
 ####Call:   
 The formula that was fitted  
+
 ####Prior probabilities of groups:  
 The probability of randomly selecting a sample falling within each group within our dataset. If unspecified in our call, this defaults to the actual proportion of the total of each user-defined group within our data. If specified, these are whatever we indicated as our priors. 
+
 ####Group means:  
 Table of average values for each of our variables by group. Useful for determining if any of our groups seem distinctive or somewhat off.  
+
 ####Coefficients of linear discriminants:
 Coefficients of the discriminant function. There will be # of groups - 1 linear discriminants. Here we have 5 groups so we'll have 4 linear discriminants. 
+
 ####Proportion of trace:
 The proportion of trace shows the proportion of variance between our groups explained by the linear discriminants.
 
@@ -113,6 +121,7 @@ At it's base level, ggord() is pretty good.
 ```{r}
 ggord(camel.lda,camels$Genus..2.)
 ```
+Easy.  
 But our data points are little big, and it's difficult to tell how our variables are influencing our data so we'll mess around with this plot a little bit.  
 The ggord default function is a little particular so if you want to use this package to make your own plots, you should check out the [raw code](https://github.com/fawda123/ggord/blob/master/R/ggord.R) for the default ggord() plot to see the easiest way to customize the code.  
 ```{r}
@@ -122,6 +131,7 @@ p+ ggtitle("DFA of Davis & McHorse 2013 Camelid data") + #adding a title
   scale_color_brewer(palette="Dark2") + #changing the palette
      theme_minimal() #adding a minimal theme because I like it more 
 ```
+
 ###How does this compare to a PCA plot?  
 ```{r}
 library(FactoMineR) #add the package with PCA() to our library
@@ -129,9 +139,9 @@ oo <- PCA(camels[, 8:15], graph = FALSE) #running our PCA model
 pca.<-ggord(oo, camels$Genus..2., txt=3, vec_ext=3, size=1 ) #plot our principal components as we did with our linear discriminants
 pca.+ ggtitle("PCA of Davis & McHorse Camelid data") + theme(plot.title = element_text(lineheight=.8, face="bold"))+ scale_color_brewer(palette="Dark2") + theme_minimal()
 ```
-There is more overlap between groups in our PCA plot than in our DFA plot. This is to be expected - recall that PCA tries to retain variability in the data while DFA retains between group variance. Also note that PC1 explains slightly more variance among our data than LD1 does among our groups.
 
-  
+There is more overlap between groups in our PCA plot than in our DFA plot. This is to be expected - recall that PCA tries to retain variability in the data while DFA retains between group variance. Also note that PC1 explains slightly more variance among our data than LD1 does among our groups.  
+
 ###Another nice way to visualize this data is by using the [{plotly}](https://cran.r-project.org/web/packages/plotly/index.html) package.    
 Allows us to look at 3 discriminant scores at the same time  
 **Also** The [plotly package](https://plot.ly/r/3d-scatter-plots/) rocks and has [very cool](https://plot.ly/javascript/) interactive visualizations and [an online interactive plot making tool](https://plot.ly/create/)  
@@ -151,7 +161,7 @@ p
 ###We have it plotted, what now?
 ![ ](https://s-media-cache-ak0.pinimg.com/originals/c8/69/de/c869de79b728f8de041470b8f8e2ff14.gif)  
 We are now interested in how accurately our discriminant function analysis classified our samples into our groups.    
-To do assess this, we need to compare our predicted groups with the actual groups.  
+To assess this, we need to compare our predicted groups with our user-specified groups.  
 ```{r}
 cam <- table(camels$Genus..2., camel.p$class) #make a table of our original group assignments and predicted group assignments
 cam #here the rows are original group assignments and the columns are predicted group assignments
@@ -160,11 +170,9 @@ From here we can quantify the overall predictive accuracy of our LDA model.
 ```{r}
 sum(cam[row(cam) == col(cam)]) / sum(cam) #summing the number of samples that were classified in the prediction as in our original data divided by the total number of samples
 ```
-Since we'll be doing this again, it will be useful to have function that generates a confusion matrix and calculates overall accuracy.  
-I didn't write this function, I got it from ![here](http://maths-people.anu.edu.au/~johnm/courses/dm/math3346/2008/pdf/r-exercisesVI.pdf) and only modified it slightly but I like the output it generates.  
-It sure makes it easy to spit out information about the accuracy of your model (as we did above but in one line).  
+Since we'll be doing this again, it will be useful to have a function that generates a confusion matrix and calculates overall accuracy. I didn't write the following function. I got it from [here](http://maths-people.anu.edu.au/~johnm/courses/dm/math3346/2008/pdf/r-exercisesVI.pdf) and only modified it slightly but I like the output it generates. It sure makes it easy to spit out information about the accuracy of your model (as we did in multiple lines of code above but now we can do it in one line).  
 ```{r}
-#this is writing a function that gives us a table that shows our predicted vs actual 
+#this is a function that gives us the overally accuracy of our model, our prior probabilities, and a table demonstrating what proportion of our groups were classified in their correct/incorrect groups.
 library(lattice)
 confusion <- function(actual, predicted, names = NULL, printit = TRUE, prior = NULL) { #names and priors are null unless otherwise specified; R should print our output
  if (is.null(names)) 
@@ -190,10 +198,12 @@ acctab <- t(apply(tab, 1, function(x) x/sum(x)))
   }
 invisible(acctab)
 }
-confusion(camels$Genus..2., camel.p$class,prior= c(1,1,1,1,1)/5) #generating our confusion matrix for our camel lda model
+original <- confusion(camels$Genus..2., camel.p$class,prior= c(1,1,1,1,1)/5) #generating our confusion matrix for our camel lda model
 ```
 So what we just did used the resubstitution error method - so just a reminder - this is how well the samples are classified when all the samples are used to generate our models.  
+
 ###But what if we want to use jackknifing?  
+
 **Reminder:** Jackknifed validation (or leave-out-one cross-validation) excludes one of our samples, generates a discriminant function with the remaining samples, uses this discriminant function to reclassify our excluded sample, and repeats this for each sample in our data set.  
 This can be done simply by indicating CV=TRUE in our lda() call.  
 ```{r}
@@ -201,28 +211,36 @@ knifed_camel <- lda(Genus..2. ~ LM + TD + TI + TP + LL + WD + WI + LI, data=came
 knifed_camel # show results
 ```
 ####Class:  
-Classification in the original dataset  
+Classification of each sample using our jackknifing method. *Note:* since the jackknifing method includes reclassifying our sample based on the model generated when that sample was removed, we don't use the predict() function.
+
 ####Posterior:  
-Probabilities of each sample being categorized within each group  
+Posterior probabilities of each sample being categorized within each group. Again, the strength of the new classification is indicated by these probabilities.  
+
 ####Terms:  
+Basically a summary of the varaiables in your model.  
 
+####Call:  
+The formula that was fitted. 
 
-
+###One final step:  
+Compare the accuracy of our jackknifed model with our non-jackknifed model.  
 ```{r}
 # Assess the accuracy of the prediction
 confusion(camels$Genus..2., knifed_camel$class,prior= c(1,1,1,1,1)/5)
+original #look at our original model again
 ```
-
+Generally speaking, we could expect our jackknifed model to not be nearly as accurate as our non-jackknifed model.  
 
 ##Iris Dataset  
 
 ![ ](http://cdn.palass.org/palaeomath_101/moribund/images/groups1/Fig1.jpg)  
 
+
 [Fisher's 1936 Paper](http://www.comp.tmu.ac.jp/morbier/R/Fisher-1936-Ann._Eugen.pdf)  
-![Ronald Fisher thinking about discriminant analysis](http://blogs.sas.com/content/jmp/files/2013/01/RA_Fisher.jpg)  
+![ ](http://blogs.sas.com/content/jmp/files/2013/01/RA_Fisher.jpg)  
+Ronald Fisher thinking about discriminant analysis... 
 
 Now with the iris data set we can repeat what we did with the camelids and run a linear discriminant analysis on our data.  
-We can also plot our data using the ggord package again.  
 ```{r}
 ldafit <- lda(Species ~ ., iris, prior = rep(1, 3)/3)
 ldafit 
@@ -230,35 +248,37 @@ irispredict<-predict(ldafit)
 confusion(iris$Species, irispredict$class)
 ggord(ldafit, iris$Species)
 ```
-
+<- Simple!  
 Quadratic Discriminant Analysis with 3 groups  
-**Reminder:** Quadratic Discriminant Analysis is used when we can't assume homogeneity of our variance-covariance matrices  
-Again use the {Mass} package but this time use the qda() function  
+**Reminder:** Quadratic Discriminant Analysis is used when we can't assume homogeneity of our variance-covariance matrices. Again we'll use the {Mass} package but this time use the qda() function.  
 ```{r}
-library(MASS)
 qdafit <- qda(Species ~ Sepal.Length+Sepal.Width+Petal.Length+Petal.Width, iris, prior = rep(1,3)/3)
 qdafit
 ```
-Once again we get the prior probabilities of groups and group means  
+Once again we get the prior probabilities of groups and group means. Now we'll use our confusion() function to get overall accuracy of our QDA model:  
 ```{r}
 confusion(iris$Species, predict(qdafit)$class)
 ```
+
 ###Some cool exploratory visualization tools  
-The [{klaR}](https://cran.r-project.org/web/packages/klaR/klaR.pdf) package allows us to look at how successful our classification methods are for every combination of 2 variables. 
+The [{klaR}](https://cran.r-project.org/web/packages/klaR/klaR.pdf) package allows us to look at how successful our classification methods are for every combination of 2 variables.  
+
 ```{r}
 #Exploratory graph for LDA or QDA
 library(klaR) 
-partimat(Species ~ Sepal.Length+Sepal.Width+Petal.Length+Petal.Width,data=iris,method="qda")
+partimat(Species ~ Sepal.Length+Sepal.Width+Petal.Length+Petal.Width,data=iris,method="lda")
 ```
-Similarly we can use the pairs() function in the basic graphics package to look at combinations of our variables  
+  
+Similarly we can use the pairs() function in the basic graphics package to look at combinations of our variables.  
 ```{r}
 pairs(iris[c("Sepal.Length","Sepal.Width","Petal.Length", "Petal.Width")], main="Scatterplot matrix for iris data", pch=22, 
    bg=c("red", "yellow", "blue")[unclass(iris$Species)])
 ```
+  
 Again, if we want to look at 3 axes at the same time 3D plots are useful.  
 The [{scatterplot3d}](https://cran.r-project.org/web/packages/scatterplot3d/scatterplot3d.pdf) package has nice visualization of scatterplots.  
 While they are not *interactive* and therefore **fabulous**, they are probably better for print, i.e. *boring*.  
-Here I'll demonstrate this with the Sepal/Petal Widths/Lengths although you could also do one of these plots to show your LD scores.  
+Here I'll demonstrate this with the Sepal/Petal Widths/Lengths although you could also do one of these plots to show your LD scores as we did above with the camelids.  
 ```{r}
 library(scatterplot3d)
 #plot the following 4 plots on the same page
@@ -273,13 +293,18 @@ scatterplot3d(iris[, 3], iris[, 4], iris[, 1], mar = mar0, color = c("red",
 scatterplot3d(iris[, 4], iris[, 1], iris[, 2], mar = mar0, color = c("red",
 "yellow", "blue")[iris$Species], pch = 19)
 ```
-
+  
+Finally, because javascript is terrific, here's a {plotly} plot of our LD scores for the iris data set:  
 ```{r}
 p <- plot_ly(data = iris, x = ~irispredict$x[,1], y = ~irispredict$x[,2], color = ~Species,
              text=~paste("Species:",Species,"LDA1:", irispredict$x[,1], "LDA2:",irispredict$x[,2], sep="<br />"),
              hoverinfo="text")
 p
 ```
+  
+On these 2D plots you can use your mouse to zoom in on certain parts of your plot and double click to zoom back out. COOL!  
 
+
+![ ](https://i.makeagif.com/media/6-06-2015/Xbe5UN.gif)
 
 
