@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 *"Bootstraps bootstraps"* - The scene in Pirates of the Caribbean, the movie about statistics on the high seas, where William Turner learns about a common resampling method - bootstrapping.  
 
 ![ ](http://images4.fanpop.com/image/photos/24200000/Will-Turner-3-will-turner-24273475-500-208.gif)  
-*"No not that knife, Orlando you fool"* - The scene in Pirates of the Caribbean where the Professor Jack Sparrow, our swashbuckling statistician, teaches young William Turner about another common resampling method - jackknifing. 
+*"No not that knife, Will!"* - The scene in Pirates of the Caribbean where the Professor Jack Sparrow, our swashbuckling statistician, teaches young William Turner about another common resampling method - jackknifing. 
 
 
 
