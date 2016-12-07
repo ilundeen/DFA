@@ -1,29 +1,44 @@
 ---
 title: "DFA"
-author: "Ingrid Lundeen"
-date: "December 6, 2016"
+author: "Amy Atwater, Emma Curtis, and Ingrid Lundeen"
+date: "December 8, 2016"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+#**DISCRIMINANT FUNCTION ANALYSIS**
+#INTRODUCTION
 
-##Davis and McHorse, 2013.
-###Palaeo Electronica.
+![](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
 
+
+#MATHY SECTION
+
+
+
+
+
+
+
+
+#EXAMPLES
+##Davis and McHorse, 2013
+###Palaeontologia Electronica
+[Link to the article](http://palaeo-electronica.org/content/2013/539-discriminant-id-of-postcrania)
 ###A method for improved identification of postrcania from mammalian fossil assemblages: multivariate discriminant function analysis of camelid astragali.
-
 ![Aepycamelus, one of these North American camelids](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Aepycamelus_Alticamelus_hharder.jpg/250px-Aepycamelus_Alticamelus_hharder.jpg)
-
-![Dimensions on astragali measured in this study](http://palaeo-electronica.org/content/images/356/figure_1.jpg)
 
 
 ```{r}
 library(curl) #needed to read in csv file from github
 camels <- read.csv(curl("https://raw.githubusercontent.com/ilundeen/nothing-to-see-here/master/camel.csv"), header=TRUE) 
 #Read in the .csv file
+head(camels)
 ```
+![Dimensions on astragali measured in this study](http://palaeo-electronica.org/content/images/356/figure_1.jpg)  
+Abbreviations: LM= medial length; LI= intermediate length; LL= lateral length; TD= distal thickness; TI= intermediate thickness; TP= proximal thickness; WD= distal width; WI= intermediate width
 
 ###Linear Discriminant Function 
 Here we're going to use the lda() function contained in the {MASS} package  
@@ -35,7 +50,6 @@ Here we're going to use the lda() function contained in the {MASS} package
 **[{sparsediscrim}](https://cran.r-project.org/web/packages/sparsediscrim/sparsediscrim.pdf)  **  
 
 
-![amy image1](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
 
 ```{r}
 library(MASS) #lda() and qda() can both be found in this package 
@@ -117,6 +131,8 @@ oo <- PCA(camels[, 8:15], graph = FALSE) #running our PCA model
 pca.<-ggord(oo, camels$Genus..2., txt=3, vec_ext=3, size=1 ) #plot our principal components as we did with our linear discriminants
 pca.+ ggtitle("PCA of Davis & McHorse Camelid data") + theme(plot.title = element_text(lineheight=.8, face="bold"))+ scale_color_brewer(palette="Dark2") + theme_minimal()
 ```
+There is more overlap between groups in our PCA plot than in our DFA plot. This is to be expected - recall that PCA tries to retain variability in the data while DFA retains between group variance. Also note that PC1 explains slightly more variance among our data than LD1 does among our groups.
+
   
 ###Another nice way to visualize this data is by using the [{plotly}](https://cran.r-project.org/web/packages/plotly/index.html) package.    
 Allows us to look at 3 LD scores at the same time  
