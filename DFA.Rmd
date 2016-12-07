@@ -17,7 +17,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #MATHY SECTION  
 
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/Bootstrap_s_Bootstraps.gif)  
+*"Bootstraps bootstraps"* - The scene in Pirates of the Caribbean, the movie about statistics on the high seas, where William Turner learns about a common resampling method - bootstrapping.  
 
+![ ](http://images4.fanpop.com/image/photos/24200000/Will-Turner-3-will-turner-24273475-500-208.gif)  
+*"No not that knife, Orlando you fool"* - The scene in Pirates of the Caribbean where the Professor Jack Sparrow, our swashbuckling statistician, teaches young William Turner about another common resampling method - jackknifing. 
 
 
 
@@ -63,16 +67,12 @@ camel.lda
 ###Displayed in this output  
 ####Call:   
 The formula that was fitted  
-
 ####Prior probabilities of groups:  
-The proportion of each group within our dataset. Describes the liklihood of an unknown sample belonging to any of our groups.   
-
+The probability of randomly selecting a sample falling within each group within our dataset. If unspecified in our call, this defaults to the actual proportion of the total of each user-defined group within our data. If specified, these are whatever we indicated as our priors. 
 ####Group means:  
-Table of average values for each of our variables. Useful for determining if any of our groups seem distinctive or somewhat off.  
-
+Table of average values for each of our variables by group. Useful for determining if any of our groups seem distinctive or somewhat off.  
 ####Coefficients of linear discriminants:
 Coefficients of the discriminant function. There will be # of groups - 1 linear discriminants. Here we have 5 groups so we'll have 4 linear discriminants. 
-
 ####Proportion of trace:
 The proportion of trace shows the proportion of variance in our data explained by the linear discriminants. In our example here, 94.31% of our variance is explained by LD1
 
