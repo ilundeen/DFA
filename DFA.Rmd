@@ -9,13 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 #**DISCRIMINANT FUNCTION ANALYSIS**
-[The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA) 
-#INTRODUCTION
+[The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA)  
+#INTRODUCTION  
 
 ![](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
 
 
-#MATHY SECTION
+#MATHY SECTION  
 
 
 
@@ -24,12 +24,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-#EXAMPLES
-##Davis and McHorse, 2013
-###Palaeontologia Electronica
-[Link to the article](http://palaeo-electronica.org/content/2013/539-discriminant-id-of-postcrania)
-###A method for improved identification of postrcania from mammalian fossil assemblages: multivariate discriminant function analysis of camelid astragali.
-![Aepycamelus, one of these North American camelids](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Aepycamelus_Alticamelus_hharder.jpg/250px-Aepycamelus_Alticamelus_hharder.jpg)
+#EXAMPLES  
+##Davis and McHorse, 2013  
+###Palaeontologia Electronica  
+[Link to the article](http://palaeo-electronica.org/content/2013/539-discriminant-id-of-postcrania)  
+###A method for improved identification of postrcania from mammalian fossil assemblages: multivariate discriminant function analysis of camelid astragali.  
+![Aepycamelus, one of these North American camelids](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Aepycamelus_Alticamelus_hharder.jpg/250px-Aepycamelus_Alticamelus_hharder.jpg)  
 
 
 ```{r}
@@ -43,7 +43,7 @@ Abbreviations: LM= medial length; LI= intermediate length; LL= lateral length; T
 
 ###Linear Discriminant Function 
 Here we're going to use the lda() function contained in the {MASS} package  
-*Note: There are other packages that run linear discriminant analyses including:  
+*Note: There are other packages that run linear discriminant analyses including:*  
 **[{DiscriMiner}](https://cran.r-project.org/web/packages/DiscriMiner/DiscriMiner.pdf)**  
 **[{mda}](https://cran.r-project.org/web/packages/mda/mda.pdf)**  
 **[{dawai}](https://cran.r-project.org/web/packages/dawai/dawai.pdf)**  
@@ -279,13 +279,6 @@ scatterplot3d(iris[, 4], iris[, 1], iris[, 2], mar = mar0, color = c("red",
 ```
 
 ```{r}
-plot_ly(iris, x=irispredict$x[ ,1], y=irispredict$x[ ,2] %>% #indicate what your axes are
-  add_markers ( #add markers and a hover label
-    text=~paste(paste("LD1:",iris[ ,1]), paste("LD2:", iris[ ,2]), paste("Species:", iris$Species), sep="<br />"), #what each element in your hover label will be and how you will separate them (if sep= "<br />" wasn't here they would all print on one long hover label)
-    color=~iris$Species,symbol=I("circle"), colors="primary", size=I(6), hoverinfo="text") %>% #how you will define points (by genus), what colors you will use, the symbol and symbol size of each point, and what what info will be shown in the hover label (in this case it is what we just "text" as) 
-  layout(scene=list(xaxis=list(title="LD1"),
-                    yaxis=list(title="LD2")))) #axes labels
-
 p <- plot_ly(data = iris, x = ~irispredict$x[,1], y = ~irispredict$x[,2], color = ~Species,
              text=~paste("Species:",Species,"LDA1:", irispredict$x[,1], "LDA2:",irispredict$x[,2], sep="<br />"),
              hoverinfo="text")
