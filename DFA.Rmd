@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 #**DISCRIMINANT FUNCTION ANALYSIS**
+[The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA) 
 #INTRODUCTION
 
 ![](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
@@ -43,11 +44,11 @@ Abbreviations: LM= medial length; LI= intermediate length; LL= lateral length; T
 ###Linear Discriminant Function 
 Here we're going to use the lda() function contained in the {MASS} package  
 *Note: There are other packages that run linear discriminant analyses including:  
-**[{DiscriMiner}](https://cran.r-project.org/web/packages/DiscriMiner/DiscriMiner.pdf)  **  
-**[{mda}](https://cran.r-project.org/web/packages/mda/mda.pdf) **  
+**[{DiscriMiner}](https://cran.r-project.org/web/packages/DiscriMiner/DiscriMiner.pdf)**  
+**[{mda}](https://cran.r-project.org/web/packages/mda/mda.pdf)**  
 **[{dawai}](https://cran.r-project.org/web/packages/dawai/dawai.pdf)**  
-**[{rrlda}](https://cran.r-project.org/web/packages/rrlda/rrlda.pdf)  **  
-**[{sparsediscrim}](https://cran.r-project.org/web/packages/sparsediscrim/sparsediscrim.pdf)  **  
+**[{rrlda}](https://cran.r-project.org/web/packages/rrlda/rrlda.pdf)**  
+**[{sparsediscrim}](https://cran.r-project.org/web/packages/sparsediscrim/sparsediscrim.pdf)**  
 
 
 
