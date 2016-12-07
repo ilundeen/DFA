@@ -1,0 +1,279 @@
+---
+title: "DFA"
+author: "Ingrid Lundeen"
+date: "December 6, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Davis and McHorse, 2013.
+###Palaeo Electronica.
+
+###A method for improved identification of postrcania from mammalian fossil assemblages: multivariate discriminant function analysis of camelid astragali.
+
+![Aepycamelus, one of these North American camelids](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Aepycamelus_Alticamelus_hharder.jpg/250px-Aepycamelus_Alticamelus_hharder.jpg)
+
+![Dimensions on astragali measured in this study](http://palaeo-electronica.org/content/images/356/figure_1.jpg)
+
+
+```{r}
+library(curl) #needed to read in csv file from github
+camels <- read.csv(curl("https://raw.githubusercontent.com/ilundeen/nothing-to-see-here/master/camel.csv"), header=TRUE) 
+#Read in the .csv file
+```
+
+###Linear Discriminant Function 
+Here we're going to use the lda() function contained in the {MASS} package  
+*Note: There are other packages that run linear discriminant analyses including:  
+**[{DiscriMiner}](https://cran.r-project.org/web/packages/DiscriMiner/DiscriMiner.pdf)  **  
+**[{mda}](https://cran.r-project.org/web/packages/mda/mda.pdf) **  
+**[{dawai}](https://cran.r-project.org/web/packages/dawai/dawai.pdf)**  
+**[{rrlda}](https://cran.r-project.org/web/packages/rrlda/rrlda.pdf)  **  
+**[{sparsediscrim}](https://cran.r-project.org/web/packages/sparsediscrim/sparsediscrim.pdf)  **  
+
+
+![amy image1](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
+
+```{r}
+library(MASS) #lda() and qda() can both be found in this package 
+camel.lda <- lda(Genus..2. ~ LM + TD + TI + TP + LL + WD + WI + LI, data=camels, prior= c(1,1,1,1,1)/5, na.action="na.omit") # Note that we're using + instead of * becuase we aren't modeling any variable interactions here
+# Prior is specified to be uninformative; if not included, default prior is set by relative abundances in the training set.
+camel.lda
+
+```
+  
+###Displayed in this output  
+####Call:   
+The formula that was fitted  
+
+####Prior probabilities of groups:  
+The proportion of each group within our dataset. Describes the liklihood of an unknown sample belonging to any of our groups.   
+
+####Group means:  
+Table of average values for each of our variables. Useful for determining if any of our groups seem distinctive or somewhat off.  
+
+####Coefficients of linear discriminants:
+Coefficients of the discriminant function. There will be # of groups - 1 linear discriminants. Here we have 5 groups so we'll have 4 linear discriminants. 
+
+####Proportion of trace:
+The proportion of trace shows the proportion of variance in our data explained by the linear discriminants. In our example here, 94.31% of our variance is explained by LD1
+
+
+
+
+###Now we are interested in how well our model reassigns our samples to our groups.
+The predict() function allows us to check how successfully the linear function we just derived classifies our data into groups.
+```{r}
+camel.p <- predict(camel.lda)
+camel.p
+
+```
+####Class:
+The first output here shows how our data were classified in our original data set
+
+####Posterior:
+The posterior probabilities shows the probability of each sample being classified within one group over another. These probabilities measure the strength of each classification. If one is much greater than the others, that sample is assigned to that group with a high degree of confidence.
+Here, many of these probabilities are high so these data are confidently assigned to groups.
+
+####x:
+This last part shows the discriminant function axis scores for each sample. These scores can be plotted to show distribution of our samples.
+
+
+###There are a number of ways to visualize these LD# scores
+A simple way to do this is to use the ggord() function in the {ggord} package to plot our model.
+  *Super easy to use.
+  *A spin-off of ggplot and we all love ggplot so you might like this.
+```{r}
+library(ggplot2)
+library(devtools)
+install_github('fawda123/ggord')
+#check out https://github.com/fawda123/ggord/blob/master/R/ggord.R to view original code for this package
+library(ggord)
+```
+At it's base level, ggord() is pretty good. 
+[check it out if you want to learn more](https://beckmw.wordpress.com/2015/05/14/reinventing-the-wheel-for-ordination-biplots-with-ggplot2/#comments)  
+```{r}
+ggord(camel.lda,camels$Genus..2.)
+
+```
+[^.]  
+But our data points are little big, and it's difficult to tell how our variables are influencing our data so we'll mess around with it a little bit.  
+The ggord default function is a little particular so if you want to use this package to make your own plots, you should check out the raw code [raw code](https://github.com/fawda123/ggord/blob/master/R/ggord.R) for the default ggord() plot to see the easiest way to customize the code.   
+```{r}
+p<-ggord(camel.lda, camels$Genus..2., txt=3, vec_ext=6, size=1 ) #adjusting text size, vector length, and size of the points
+p+ ggtitle("DFA of Davis & McHorse 2013 Camelid data") + #adding a title
+     theme(plot.title = element_text(lineheight=.8, face="bold"))+ #changing the title text 
+  scale_color_brewer(palette="Dark2") + #changing the palette
+     theme_minimal() #adding a minimal theme because I like it more 
+```
+
+###How does this compare to a PCA plot?  
+```{r}
+library(FactoMineR) #add the package with PCA() to our library
+oo <- PCA(camels[, 8:15], graph = FALSE) #running our PCA model
+pca.<-ggord(oo, camels$Genus..2., txt=3, vec_ext=3, size=1 ) #plot our principal components as we did with our linear discriminants
+pca.+ ggtitle("PCA of Davis & McHorse Camelid data") + theme(plot.title = element_text(lineheight=.8, face="bold"))+ scale_color_brewer(palette="Dark2") + theme_minimal()
+```
+  
+###Another nice way to visualize this data is by using the [{plotly}](https://cran.r-project.org/web/packages/plotly/index.html) package.    
+Allows us to look at 3 LD scores at the same time  
+The [plotly package](https://plot.ly/r/3d-scatter-plots/) rocks and has very cool interactive visualizations  
+
+```{r}
+library(plotly)
+p<-plot_ly(camels, x=camel.p$x[,1], y=camel.p$x[,2], z=camel.p$x[,3]) %>% #indicate what your axes are
+  add_markers ( #add markers and a hover label
+    text=~paste(paste("LD1:",camel.p$x[,1]), paste("LD2:",camel.p$x[,2]), paste("LD3:",camel.p$x[,3]) , paste("Genus:", camels$Genus..2.), sep="<br />"), #what each element in your hover label will be and how you will separate them (if sep= "<br />" wasn't here they would all print on one long hover label)
+    color=~camels$Genus..2., colors="Set1",symbol=I("circle"), size=I(6), hoverinfo="text") %>% #how you will define points (by genus), what colors you will use, the symbol and symbol size of each point, and what what info will be shown in the hover label (in this case it is what we just "text" as) 
+  layout(scene=list(xaxis=list(title="LD1"),
+                    yaxis=list(title="LD2"),
+                    zaxis=list(title="LD3"))) #axes labels
+p
+```
+
+
+###We have it plotted, what now?
+![ ](https://s-media-cache-ak0.pinimg.com/originals/c8/69/de/c869de79b728f8de041470b8f8e2ff14.gif)  
+We are now interested in how accurately our discriminant function analysis classified our samples into our groups.    
+To do assess this, we need to compare our predicted groups with the actual groups.  
+```{r}
+cam <- table(camels$Genus..2., camel.p$class) #make a table of our original group assignments and predicted group assignments
+cam #here the rows are original group assignments and the columns are predicted group assignments
+```
+From here we can quantify the overall predictive accuracy of our LDA model.
+```{r}
+sum(cam[row(cam) == col(cam)]) / sum(cam) #summing the number of samples that were classified in the prediction as in our original data divided by the total number of samples
+```
+Since we'll be doing this again, it will be useful to have function that generates a confusion matrix and calculates overall accuracy.  
+I didn't write this function, I got it from ![here](http://maths-people.anu.edu.au/~johnm/courses/dm/math3346/2008/pdf/r-exercisesVI.pdf) and only modified it slightly but I like the output it generates.  
+It sure makes it easy to spit out information about the accuracy of your model (as we did above but in one line).  
+```{r}
+#this is writing a function that gives us a table that shows our predicted vs actual 
+library(lattice)
+confusion <- function(actual, predicted, names = NULL, printit = TRUE, prior = NULL) { #names and priors are null unless otherwise specified; R should print our output
+ if (is.null(names)) 
+ names <- levels(actual)
+ tab <- table(actual, predicted)
+acctab <- t(apply(tab, 1, function(x) x/sum(x)))
+ dimnames(acctab) <- list(Actual = names, "Predicted" = names)
+ if (is.null(prior)) {
+ relnum <- table(actual)
+ prior <- relnum/sum(relnum)
+ acc <- sum(tab[row(tab) == col(tab)])/sum(tab)
+ }
+ else {
+ acc <- sum(prior * diag(acctab))
+ names(prior) <- names
+ }
+ if (printit)
+ print(round(c("Overall accuracy" = acc, "Prior frequency" = prior),
+ 4))
+ if (printit) {
+ cat("\nConfusion matrix", "\n")
+  print(round(acctab, 4))
+  }
+invisible(acctab)
+}
+confusion(camels$Genus..2., camel.p$class,prior= c(1,1,1,1,1)/5) #generating our confusion matrix for our camel lda model
+```
+So what we just did used the resubstitution error method - so just a reminder - this is how well the samples are classified when all the samples are used to generate our models.  
+###But what if we want to use jackknifing?  
+**Reminder:** Jackknifed validation (or leave-out-one cross-validation) excludes one of our samples, generates a discriminant function with the remaining samples, uses this discriminant function to reclassify our excluded sample, and repeats this for each sample in our data set.  
+This can be done simply by indicating CV=TRUE in our lda() call.  
+```{r}
+knifed_camel <- lda(Genus..2. ~ LM + TD + TI + TP + LL + WD + WI + LI, data=camels, prior= c(1,1,1,1,1)/5, na.action="na.omit", CV=TRUE) #CV=TRUE means we're going to jackknife the cuss out of this thing
+knifed_camel # show results
+```
+####Class:  
+Classification in the original dataset  
+####Posterior:  
+Probabilities of each sample being categorized within each group  
+####Terms:  
+
+
+
+```{r}
+# Assess the accuracy of the prediction
+confusion(camels$Genus..2., knifed_camel$class,prior= c(1,1,1,1,1)/5)
+```
+
+
+##Iris Dataset  
+
+![ ](http://cdn.palass.org/palaeomath_101/moribund/images/groups1/Fig1.jpg)  
+
+[Fisher's 1936 Paper](http://www.comp.tmu.ac.jp/morbier/R/Fisher-1936-Ann._Eugen.pdf)  
+![Ronald Fisher thinking about discriminant analysis](http://blogs.sas.com/content/jmp/files/2013/01/RA_Fisher.jpg)  
+
+Now with the iris data set we can repeat what we did with the camelids and run a linear discriminant analysis on our data.  
+We can also plot our data using the ggord package again.  
+```{r}
+ldafit <- lda(Species ~ ., iris, prior = rep(1, 3)/3)
+ldafit 
+irispredict<-predict(ldafit)
+confusion(iris$Species, irispredict$class)
+ggord(ldafit, iris$Species)
+```
+
+Quadratic Discriminant Analysis with 3 groups  
+**Reminder:** Quadratic Discriminant Analysis is used when we can't assume homogeneity of our variance-covariance matrices  
+Again use the {Mass} package but this time use the qda() function  
+```{r}
+library(MASS)
+qdafit <- qda(Species ~ Sepal.Length+Sepal.Width+Petal.Length+Petal.Width, iris, prior = rep(1,3)/3)
+qdafit
+```
+Once again we get the prior probabilities of groups and group means  
+```{r}
+confusion(iris$Species, predict(qdafit)$class)
+```
+###Some cool exploratory visualization tools  
+The [{klaR}](https://cran.r-project.org/web/packages/klaR/klaR.pdf) package allows us to look at how successful our classification methods are for every combination of 2 variables. 
+```{r}
+#Exploratory graph for LDA or QDA
+library(klaR) 
+partimat(Species ~ Sepal.Length+Sepal.Width+Petal.Length+Petal.Width,data=iris,method="qda")
+```
+Similarly we can use the pairs() function in the basic graphics package to look at combinations of our variables  
+```{r}
+pairs(iris[c("Sepal.Length","Sepal.Width","Petal.Length", "Petal.Width")], main="Scatterplot matrix for iris data", pch=22, 
+   bg=c("red", "yellow", "blue")[unclass(iris$Species)])
+```
+Again, if we want to look at 3 axes at the same time 3D plots are useful.  
+The [{scatterplot3d}](https://cran.r-project.org/web/packages/scatterplot3d/scatterplot3d.pdf) package has nice visualization of scatterplots.  
+While they are not *interactive* and therefore **fabulous**, they are probably better for print, i.e. *boring*.  
+Here I'll demonstrate this with the Sepal/Petal Widths/Lengths although you could also do one of these plots to show your LD scores.  
+```{r}
+library(scatterplot3d)
+#plot the following 4 plots on the same page
+par(mfrow = c(2, 2)) #number of rows
+mar0 = c(2, 3, 2, 3) #dimensions for each plot
+scatterplot3d(iris[, 1], iris[, 2], iris[, 3], mar = mar0, color = c("red", #specify which columns of the data set you want to plot, what the margins should be, and what color
+"yellow", "blue")[iris$Species], pch = 19) #what you should separate colors by (species) and the size of the points
+scatterplot3d(iris[, 2], iris[, 3], iris[, 4], mar = mar0, color = c("red",
+"yellow", "blue")[iris$Species], pch = 19)
+scatterplot3d(iris[, 3], iris[, 4], iris[, 1], mar = mar0, color = c("red",
+"yellow", "blue")[iris$Species], pch = 19)
+scatterplot3d(iris[, 4], iris[, 1], iris[, 2], mar = mar0, color = c("red",
+"yellow", "blue")[iris$Species], pch = 19)
+```
+
+```{r}
+plot_ly(iris, x=irispredict$x[ ,1], y=irispredict$x[ ,2] %>% #indicate what your axes are
+  add_markers ( #add markers and a hover label
+    text=~paste(paste("LD1:",iris[ ,1]), paste("LD2:", iris[ ,2]), paste("Species:", iris$Species), sep="<br />"), #what each element in your hover label will be and how you will separate them (if sep= "<br />" wasn't here they would all print on one long hover label)
+    color=~iris$Species,symbol=I("circle"), colors="primary", size=I(6), hoverinfo="text") %>% #how you will define points (by genus), what colors you will use, the symbol and symbol size of each point, and what what info will be shown in the hover label (in this case it is what we just "text" as) 
+  layout(scene=list(xaxis=list(title="LD1"),
+                    yaxis=list(title="LD2")))) #axes labels
+
+p <- plot_ly(data = iris, x = ~irispredict$x[,1], y = ~irispredict$x[,2], color = ~Species,
+             text=~paste("Species:",Species,"LDA1:", irispredict$x[,1], "LDA2:",irispredict$x[,2], sep="<br />"),
+             hoverinfo="text")
+p
+```
+
+
+
