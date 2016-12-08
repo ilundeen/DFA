@@ -34,7 +34,7 @@ install_github('fawda123/ggord')
 [The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA)  
 
 #OBJECTIVES {.tabset }    
-In this module we will examine Discriminant Function Analysis, a pattern-recognition statistical method that characterizes or seperates two or more classes of objects or events. We will go over the different uses of DFAs, work through a basic example by hand, and will end with running an analysis together using actual data and function within packages in R.   
+In this module we will examine Discriminant Function Analysis, a pattern-recognition statistical method that characterizes or separates two or more classes of objects or events. We will go over the different uses of DFAs, work through a basic example by hand, and will end with running an analysis together using actual data and function within packages in R.   
 Key concepts: Variance & covariance, Discriminant scores, Comparison to PCA & MANOVA
   
 #THE BASICS {.tabset} 
@@ -135,7 +135,8 @@ x~i~~h~~2~: score of individual *i* on second observed variable
 w~1~ and w~2~: Discriminant Coefficients (i.e., weights that define the discriminant/canonical variate in terms of the two observed variables)  
 
 ####More generally: 
-![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/discriminantscore2.JPG)
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/discriminantscore2.JPG)  
+
 Let’s start with a simple example in which we have two continuous variables being measured on seven individuals. These individuals have been assigned to either group 1 or group 2.  
 As previously mentioned, the subscripts *i* and *h* refer to individual observation and group designation, respectively. Here we include an additional subscript, *j*, which refers to which of the two variables we are referencing.  
 Hence, in matrix X, the two columns represent the two variables being measured (*j*~1~ and *j*~2~) and each row represents the values for each of those variables per individual, *i*.  
