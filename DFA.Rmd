@@ -7,7 +7,7 @@ output:
     theme: spacelab
     highlight: tango
     toc: true
-    toc_depth: 3
+    toc_depth: 2
     toc_float: true
     fig_width: 7
     fig_height: 6
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
   tidy.opts = list(width.cutoff = 75)
   )
 ```
-#PRELIMINARIES  
+#PRELIMINARIES  {.tabset}
 {MASS}, {car}, {curl}, {ggplot2}, {devtools}, {ggord}, {plotly}, {klaR}, {FactoMineR}, {lattice}, {Scatterplot3d}  
 An easy way to install ggord is to run the following:  
 ```{r}
@@ -33,11 +33,11 @@ install_github('fawda123/ggord')
 ```
 [The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA)  
 
-#OBJECTIVES    
+#OBJECTIVES {.tabset }    
 In this module we will examine Discriminant Function Analysis, a pattern-recognition statistical method that characterizes or seperates two or more classes of objects or events. We will go over the different uses of DFAs, work through a basic example by hand, and will end with running an analysis together using actual data and function within packages in R.   
 Key concepts: Variance & covariance, Discriminant scores, Comparison to PCA & MANOVA
   
-#THE BASICS  
+#THE BASICS {.tabset} 
 Discriminant Function Analysis (DFA) is a populate statistical method used to determine which continuous independent variables discriminate between two or more categorical variables in such a way that the differences between predefined groups are maximized.  
   
 Last week we learned about Principal Component Analysis, a technique to describe the relationship and structure in data. We saw how useful it can be in finding the correlations between variables in multivariate data.  
@@ -66,18 +66,18 @@ Discriminant analysis works by producing one or more linear combinations of pred
 Here is an animation showing how some projections of data are able to discriminate data better than others:  
 <img src="http://www.alanfielding.co.uk/multivar/images/anim3d.gif" width="420px"/> 
   
-# DEFINITIONS  
+# DEFINITIONS {.tabset}  
 **Variance:** A measure (similar to standard deviation) of how much spread, or range, is present in your dataset.  
 **Covariance:** A measure of how variables vary from the mean with respect to each other.  
 **Variance-Covariance Matrix:** Variance within each variable on the diagonal, and the covariance between groups is vertical  
 **Discriminant score:** The weighted linear combination (sum) of the discriminating variables or predictors.  
-**Discriminant coefficient:** The correlation between each predictor variable and the discriminant score of each function. 
-**Centroid:** The global means.
-**Training data:** Dataset of variables with known groupings that is used to generate a model.
-**Linear discriminant function analysis:** Method most often used, DFA when all the assumptions are met. AKA Linear Discriminant or Canonical Discriminant Function...  
-**Fisher's linear discriminant analysis:** DFA where there are only two groups.
-**Quadratic discriminant function analysis:** Used when you can't meet assumptions for linear, i.e. Homogeneity of variances/covariances  
-**Jackknife:** A resampling technique (similar to bootstrapping) without replacement. In jackknifing, one sample is removed from your data, a discriminant model is calculated based on the remaining data, then your removed sample is reclassified based on the discriminant model produced without that sample. This is repeated for all your samples to get a jackknifed discriminant model of your entire dataset.  
+**Discriminant coefficient:** The correlation between each predictor variable and the discriminant score of each function.  
+**Centroid:** The global means.  
+**Training dataset: ** Dataset of variables with known groupings that is used to generate a model.  
+**Linear discriminant function analysis:** Method most often used, DFA when all the assumptions are met. AKA Linear Discriminant or Canonical Discriminant Function...    
+**Fisher's linear discriminant analysis:** DFA where there are only two groups.  
+**Quadratic discriminant function analysis:** Used when you can't meet assumptions for linear, i.e. Homogeneity of variances/covariances    
+**Jackknife:** A resampling technique (similar to bootstrapping) without replacement. In jackknifing, one sample is removed from your data, a discriminant model is calculated based on the remaining data, then your removed sample is reclassified based on the discriminant model produced without that sample. This is repeated for all your samples to get a jackknifed discriminant model of your entire dataset.    
   
 ![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/Bootstrap_s_Bootstraps.gif)  
 *"Bootstraps bootstraps"* - The scene in Pirates of the Caribbean, the movie about statistics on the high seas, where William Turner learns about a common resampling method - bootstrapping.  
@@ -85,8 +85,8 @@ Here is an animation showing how some projections of data are able to discrimina
 ![ ](http://images4.fanpop.com/image/photos/24200000/Will-Turner-3-will-turner-24273475-500-208.gif)  
 *"No, not that knife, Will!"* - The scene in Pirates of the Caribbean where Professor Jack Sparrow, the swashbuckling statistician, teaches young Will Turner about another common resampling method - jackknifing. 
   
-#ASSUMPTIONS:  
-##The assumptions of DFA are the same as those for MANOVA     
+#ASSUMPTIONS {.tabset }  
+##The assumptions of DFA are the same as those for MANOVA   
 **Sample Size:** Sample size does not have to be equal. However, the sample size of the smallest group must be greater than the number of predictor variables.  
   
 **Normal Distribution:** DFA assumes the data represent a sample from a multivariate normal distribution.  
@@ -98,7 +98,7 @@ Here is an animation showing how some projections of data are able to discrimina
 **Non-multicollinearity:** The independent variables should not be highly correlated with another. Also must be low multicollinearity of the independents.  
   
 
-#MATHEMATICAL UNDERPINNINGS
+#MATHEMATICAL UNDERPINNINGS {.tabset .tabset-pills}
 In many cases—including those we have examined in class thus far—our research goal is to determine the effect of group membership on multiple dependent measures. In this case, the groups or factors, serve as independent or (if found to be significant) predictive variables, which allow us to **(1)** test for statistically significant differences between/among groups and **(2)** determine which of the dependent measures are most significantly correlated with or impacted by group membership.  
   
 **MANOVA (Multivariate Analysis of Variance)**—single-dichotomy/polytomy-multiple dependent variable  
@@ -106,7 +106,8 @@ In many cases—including those we have examined in class thus far—our researc
 •	Allows you to determine which variables are most effected by the manipulation: What does this independent variable affect  
   
 ###An opposite approach  
-##Discriminant Function Analysis  
+
+##Discriminant Function Analysis 
 **Question 1:** Can we discriminate among groups, and if so, how well?  
 **Question 2:** Which combination of variables (a.k.a., canonical variate) best discriminates among groups?   
 Opposite approach: here we are using regression weights to form a composite dependent variable, and then using multiple regression formulas to assess the significance of group separation.  
@@ -158,7 +159,7 @@ Using these vectors we can also calculate d vector (which we will need later on)
 ![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/dvector.JPG)  
 
   
-###Calculating the Variance-Covariance Matrix  
+###Calculating the Variance-Covariance Matrix 
 Before we can calculate our VCV matrix, we must standardize our values by subtracting the global mean vector from each set of observations:  
 ![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/stdmatrix.JPG)  
 
@@ -267,7 +268,7 @@ Here, many of these probabilities are high so these data are confidently assigne
 ####x:
 This last part shows the discriminant function axis scores for each sample. These scores can be plotted to show distribution of our samples.
 
-##Plotting
+##Plotting 
 ###There are a number of ways to visualize these discriminant scores
 A simple way to do this is to use the ggord() function in the {ggord} package to plot our model.  
 Why use this package over others?  
@@ -326,7 +327,7 @@ p
 ![ ](https://s-media-cache-ak0.pinimg.com/originals/c8/69/de/c869de79b728f8de041470b8f8e2ff14.gif)  
   
   
-##Assessing our DFA
+##Assessing our DFA 
 We are now interested in how accurately our discriminant function analysis classified our samples into our groups.    
 To assess this, we need to compare our predicted groups with our user-specified groups.  
 ```{r}
@@ -371,7 +372,7 @@ confusion(camels$Genus..2., camel.p$class,prior= c(1,1,1,1,1)/5) #generating our
 
 ###But what if we want to use jackknifing?  
   
-##Jackknifing
+##Jackknifing 
 **Reminder:** Jackknifed validation (or leave-out-one cross-validation) excludes one of our samples, generates a discriminant function with the remaining samples, uses this discriminant function to reclassify our excluded sample, and repeats this for each sample in our data set.  
 This can be done simply by indicating CV=TRUE in our lda() call.  
 ```{r}
@@ -402,7 +403,7 @@ confusion(camels$Genus..2., camel.p$class,prior= c(1,1,1,1,1)/5) #look at our or
 Generally speaking, we could expect our jackknifed model to not be nearly as accurate as our non-jackknifed model.  
   
     
-#IRIS DATA 
+#IRIS DATA {.tabset .tabset-pills}
 
 ![ ](http://cdn.palass.org/palaeomath_101/moribund/images/groups1/Fig1.jpg)    
 **Ronald Fisher**  
@@ -417,17 +418,14 @@ Generally speaking, we could expect our jackknifed model to not be nearly as acc
 
 ![ ](http://blogs.sas.com/content/jmp/files/2013/01/RA_Fisher.jpg)  
 Ronald Fisher thinking about discriminant analysis...   
-
+##LDA vs QDA  
 Now with the iris data set we can repeat what we did with the camelids and run a linear discriminant analysis on our data.  
 ```{r}
 ldafit <- lda(Species ~ ., iris, prior = rep(1, 3)/3)
-ldafit 
 irispredict<-predict(ldafit)
 confusion(iris$Species, irispredict$class)
-ggord(ldafit, iris$Species)
 ```
   
-##QDA vs LDA  
 Quadratic Discriminant Analysis with 3 groups  
 **Reminder:** Quadratic Discriminant Analysis is used when we can't assume homogeneity of our variance-covariance matrices. Again we'll use the {Mass} package but this time use the qda() function.  
 ```{r}
@@ -439,7 +437,7 @@ confusion(iris$Species, predict(qdafit)$class)
 ```
 
 ##Some cool exploratory visualization tools  
-###Partition plots  
+###Partition plots  {.tabset}
 The [{klaR}](https://cran.r-project.org/web/packages/klaR/klaR.pdf) package allows us to look at how successful our classification methods are for every combination of 2 variables.  
 ```{r}
 #Exploratory graph for LDA or QDA
@@ -454,7 +452,7 @@ pairs(iris[c("Sepal.Length","Sepal.Width","Petal.Length", "Petal.Width")], main=
    bg=c("red", "yellow", "blue")[unclass(iris$Species)])
 ```
   
-###3D Scatterplots
+###3D Scatterplots  
 Again, if we want to look at 3 axes at the same time 3D plots are useful.  
 The [{scatterplot3d}](https://cran.r-project.org/web/packages/scatterplot3d/scatterplot3d.pdf) package has nice visualization of scatterplots.  
 While they are not *interactive* and therefore **fabulous**, they are probably better for print, i.e. *boring*.  
@@ -474,7 +472,7 @@ scatterplot3d(iris[, 4], iris[, 1], iris[, 2], mar = mar0, color = c("red",
 "yellow", "blue")[iris$Species], pch = 19)
 ```
   
-###Interactive 2D plots
+###Interactive 2D plots   
 Finally, because javascript is terrific, here's a {plotly} plot of our LD scores for the iris data set:  
 ```{r}
 p <- plot_ly(data = iris, x = ~irispredict$x[,1], y = ~irispredict$x[,2], color = ~Species,
@@ -488,7 +486,7 @@ On these 2D plots you can use your mouse to zoom in on certain parts of your plo
 
 ![ ](https://i.makeagif.com/media/6-06-2015/Xbe5UN.gif)
 
-#REFERENCES
+#REFERENCES {.tabset}
 1)  [Alan Fielding](http://www.alanfielding.co.uk/multivar/dawords.htm)
 2)  [SFSU](http://userwww.sfsu.edu/efc/classes/biol710/discrim/discrim.pdf)
 3)  [R-Bloggers](https://www.r-bloggers.com/computing-and-visualizing-lda-in-r/)
