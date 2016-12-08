@@ -1,36 +1,181 @@
 ---
-title: "DFA"
+title: "Discriminant Function Analysis"
 author: "Amy Atwater, Emma Curtis, and Ingrid Lundeen"
 date: "December 8, 2016"
-output: html_document
+output: 
+  html_document:
+    theme: spacelab
+    highlight: espresso
+    toc: true
+    toc_depth: 3
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-captions=TRUE
+knitr::opts_chunk$set(
+  echo = TRUE, 
+  warning = FALSE, 
+  comment = "##", 
+  prompt = FALSE, 
+  tidy = TRUE, 
+  tidy.opts = list(width.cutoff = 75)
+  )
 ```
-#**DISCRIMINANT FUNCTION ANALYSIS**
+#PRELIMINARIES  
+{MASS}, {car}, {curl}, {ggplot2}, {devtools}, {ggord}, {plotly}, {klaR}, {FactoMineR}, {lattice}, {Scatterplot3d}  
+An easy way to install ggord is to run the following:  
+```{r}
+library(devtools)
+install_github('fawda123/ggord')
+```
 [The link to this vignette](https://github.com/ilundeen/DFA) (https://github.com/ilundeen/DFA)  
 
-#INTRODUCTION  
+#OBJECTIVES    
+In this module we will examine Discriminate Function Analysis, a pattern-recognition statistical method that characterizes or seperates two or more classes of objects or events. We will go over the different uses of DFAs, work through a basic example by hand, and will end with running an analysis together using actual data and the built-in R packages.   
+Key concepts: Variance & covariance, Discriminant scores, Comparison to PCA  
+  
+#The Basics  
+Discriminate Function Analysis (DFA) is a populate statistical method used to determine which continuous independent variables discriminate between two or more categorical variables in such a way that the differences between predefined groups are maximized.  
+  
+Last week we learned about Principal Component Analysis, a technique to describe the relationship and structure in data. We saw how useful it can be in finding the correlations between variables in multivariate data.  
+Discriminant function analysis is very similar to PCA. The major difference is that PCA calculates the best discriminating variables without prior knowledge about groups, whereas DFA calculates the best disciminating variables (=disciminants) for groups that are defined by the user.  
+  
+DFA's are good tools for:    
+**Visualizing multivariate data**  
+**Understanding the most meaningful sources of variance in your data**  
+**Understanding the best descriminating variables in your data, with prior knowledge about groups**  
+**Predicting categorical groups**  
+**Determining which variables best predict groups**  
+**Reducing the changes of misclassifying your unknown data**  
+  
+Biologically, you might use a DFA to determine which variables discriminate between leaves eaten by 1) sloths  2) howler monkeys 3) leaf ants. For that purpose, the biologist would collect data on numerous leaf characteristics of those species eaten by each of the animal groups. Ideally, most leaves will naturally fall into one of these three categories. DFA could then be used to determine which variables are the best predictors of whether a leaf will be eaten by sloths, monkeys, or ants.  
+  
 
 ![](https://raw.githubusercontent.com/aatwater/Project-2/master/img/veg.png)
+  
+DFA is like the reverse of a MANOVA, which is used to predict multiple continuous dependent variables by one or more independent categorical variables. Instead, DFA is a powerful predictor tool, and useful in determining whether a set of variables is actually effective in predicting categories. This means that DFA can only be used when groups are known a priori. You can think of DFA as a classification, with the proper dataset, DFA can distribute things into groups of the same type.  
+  
+Discriminant analysis works by producing one or more linear combinations of predictor variables, creating a new underlying variable for each function. These functions are called discriminant functions. The number of possible functions is the number of groups minus one (ng - 1), or the number of predictors whichever is smaller. The first discriminant function, similar to the first principal component, maximizes differences between group on that function. The second function does the same, but also must not be correlated with the previous function, this continues for the rest of the functions.  
 
-
-#MATHY SECTION  
-
+####Example on the board  
+  
+Here is a animations showing how some projections of data are able to discriminate data better than others:  
+<img src="http://www.alanfielding.co.uk/multivar/images/anim3d.gif" width="420px"/> 
+  
+# Definitions  
+**Variance:** A measure (similar to standard deviation) of how much spread, or range, is present in your dataset.  
+**Covariance:** A measure of how variables vary from the mean with respect to each other.  
+**Variance-Covariance Matrix:** Variance within each variable on the diagonal, and the covariance between groups is vertical  
+**Discriminant score:** The weighted linear combination (sum) of the discriminating variables or predictors.  
+**Discriminant coefficient:** The correlation between each predictor variable and the discriminant score of each function.  
+**Linear discriminant function analysis:** Method most often used, DFA when all the assumptions are met. AKA Fischer LDA, AKA Linear Discriminant, AKA Canonical Variate...  
+**Quadratic discriminant function analysis:** Used when you can't meet assumptions for linear, i.e. Homogeneity of variances/covariances  
+**Jackknife:** A resampling technique (similar to bootstrapping) without replacement.  
+  
 ![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/Bootstrap_s_Bootstraps.gif)  
 *"Bootstraps bootstraps"* - The scene in Pirates of the Caribbean, the movie about statistics on the high seas, where William Turner learns about a common resampling method - bootstrapping.  
-
+  
 ![ ](http://images4.fanpop.com/image/photos/24200000/Will-Turner-3-will-turner-24273475-500-208.gif)  
 *"No, not that knife, Will!"* - The scene in Pirates of the Caribbean where Professor Jack Sparrow, the swashbuckling statistician, teaches young William Turner about another common resampling method - jackknifing. 
+  
+# Assumptions: The assumptions of DFA are the same as those for MANOVA.   
+**Sample Size:** Sample size does not have to be equal. However, the sample size of the smallest group must be greater than the number of predictor variables.  
+  
+**Normal Distribution:** DFA assumes the data represent a sample from a multivariate normal distribution.  
+  
+**Homogeneity of variances/covariances:** DFA is sensitive to heterogeneity of variance-covariance matrices.  
+  
+**Outliers:** DFA is also very sensitive to the inclusion of outliers. It is recommended to run a test for univariate and multivariate outliers for each group, and elimate or transform the outliers.  
+  
+**Non-multicollinearity:** The independent variables should not be highly correlated with another. Also must be low multicollinearity of the independents.  
+  
 
+#THE INNER MATH OF DFA
+In many cases—including those we have examined in class thus far—our research goal is to determine the effect of group membership on multiple dependent measures. In this case, the groups or factors, serve as independent or (if found to be significant) predictive variables, which allow us to **(1)** test for statistically significant differences between/among groups and **(2)** determine which of the dependent measures are most significantly correlated with or impacted by group membership.  
+**MANOVA (Multivariate Analysis of Variance)**—single-dichotomy/polytomy-multiple dependent variable  
+•	Controls the experiment-wise alpha level (necessary when using multiple dependent variables)  
+•	Allows you to determine which variables are most effected by the manipulation: What does this independent variable affect  
+##An opposite approach - Discriminant Function Analysis  
+**Question 1:** Can we discriminate among groups, and if so, how well?  
+**Question 2:** Which combination of variables (a.k.a., canonical variate) best discriminates among groups? Opposite approach: here we are using regression weights to form a composite dependent variable, and then using multiple regression formulas to assess the significance of group separation.  
+  
+Put another way our factors (dichotomy/polytomy) have now become the dependent variables and our measurements have become our independent/predictive variables.Hence:  
+  *The new axis created via DFA is a linear composite of the observed variables composed in an attempt to minimize the overlap in the distributions of the observed variables.  
+  *This axis represents an approximate discriminant or canonical variate, a function in which the observed variables are weighted based on discriminant coefficients.  
 
+###Distances between/among groups:  
+####Euclidean Distances (i.e., straight line)  
+  *How far are different points from the origin?  
+  *Closest does not always correlate with ellipses (standard deviations).  
+####Mahalonobis Distance  
+  *Takes into account the structure of the variance-covariance matrix (means of standardization).  
+  *Tells you the distance of a data point to the middle of a data cloud.  
+  *Can also be used to look between/among groups (i.e., distance between a point and a specific group mean); if there is a true group difference, we expect that data of group X will be closer in shape space to the mean of X than mean of Y or Z.  
+  
+##Calculating discriminant scores (mostly) by hand:
+![](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/discriminantscore.JPG)
 
+z~ih~ - discriminant/canonical score of individual *i* of group *h*  
+x~ih1~ - score of individual *i* on first observed variable  
+x~ih2~ - score of individual *i* on second observed variable  
+w~1~ and w~2~ - Discriminant Coefficients (i.e., weights that define the discriminant/canonical variate in terms of the two observed variables)  
 
+####More generally: 
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/discriminantscore2.JPG)
+Let’s start with a simple example in which we have two continuous variables being measured on seven individuals. These individuals have been assigned to either group 1 or group 2.  
+As previously mentioned, the subscripts *i* and *h* refer to individual observation and group designation, respectively. Here we include an additional subscript, *j*, which refers to which of the two variables we are referencing.  
+Hence, in matrix X, the two columns represent the two variables being measured (*j*~1~ and *j*~2~) and each row represents the values for each of those variables per individual, *i*.  
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/rawmatrix.JPG)  
+```{R}
+library(curl)
+dfa<-read.csv(curl("https://raw.githubusercontent.com/ilundeen/DFA/master/dfaexample.csv"),header=T)
+library(MASS)
+library(ggplot2)
+plot<- ggplot(dfa) + geom_point(aes(j1, j2, colour = Group), size = 2.5)
+plot
+```
+The next step is to divide matrix X into two separate matrices based on group:
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/sepmatrices.JPG)
+The next step is to calculate the mean vectors for each group separately, as well as the global mean vector:
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/meanvectors.JPG)
+Using these vectors we can also calculate d vector (which we will need later on) by calculating the differences in group means:
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/dvector.JPG)
+  
+###Calculating the Variance-Covariance Matrix  
+Before we can calculate our VCV matrix, we must standardize our values by subtracting the global mean vector from each set of observations:  
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/stdmatrix.JPG)  
 
+####Brief review - what is a VCV matrix?  
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/vcv.png)  
+Each matrix is then multiplied by its posterior probability (in this case h1 = 4/7 and h2 = 3/7), and the two matrices are added together. This results in a pooled VCV matrix that encompasses the observations from the entire dataset. Next we compute the inverse of VCV matrix.    
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/inverse.JPG)  
+NOTE: If anyone feels compelled to manually calculate the inverse of a matrix, here are two very helpful links:  
+[Here](http://www.purplemath.com/modules/mtrxinvr.htm)  
+[Here](http://www.purplemath.com/modules/mtrxrows.htm)  
+  
+However, there is also a quick and easy R function that will do this for you: solve(A)  
+This inverse matrix is then multiplied by the *d* vector (calculated previously) to compute our *w* vector, the values of which will be used to weight the variables in the original equation to calculate the discriminant score, *z*.
 
-#EXAMPLES  
+![ ](https://raw.githubusercontent.com/ilundeen/DFA/master/EmmaImages/final.JPG)  
+  
+Alternatively, the matrix inversion and vector multiplication can be accomplished using one simple function in R. Assuming you have read in your VCV matrix *A* and your mean vector *d*, you can use the same 'solve()' function; in this case it would be inputted as: solve(*A*,*d*)  
+  
+```{R}
+A<-matrix(c(0.206,-0.233,-0.233,1.689),nrow=2,ncol = 2)
+d<-matrix(c(0.38,1.65),nrow=2,ncol=1)
+solve(A,d)
+```  
+
+```{R}
+library(ggplot2)
+library(car)
+fit<- lda(Group ~ j1 + j2, data=dfa, prior= c(4,3)/7)
+plot(fit)
+```
+  
+  
+  
+#EXAMPLE  
 ##Davis and McHorse, 2013  
 ###Palaeontologia Electronica  
 [Link to the article](http://palaeo-electronica.org/content/2013/539-discriminant-id-of-postcrania)  
@@ -200,7 +345,7 @@ invisible(acctab)
 }
 original <- confusion(camels$Genus..2., camel.p$class,prior= c(1,1,1,1,1)/5) #generating our confusion matrix for our camel lda model
 ```
-So what we just did used the resubstitution error method - so just a reminder - this is how well the samples are classified when all the samples are used to generate our models.  
+    
 
 ###But what if we want to use jackknifing?  
 
