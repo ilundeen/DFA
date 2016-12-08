@@ -409,15 +409,17 @@ Generally speaking, we could expect our jackknifed model to not be nearly as acc
 **Ronald Fisher**  
 **The use of multiple measurements in taxonomic problems**   
 [Fisher's 1936 Paper](http://www.comp.tmu.ac.jp/morbier/R/Fisher-1936-Ann._Eugen.pdf)  
+
 * 1936 publication used iris morphological features to demonstrate the use of linear discriminant analysis  
 * Sometimes called Anderson's iris data set (he originally collected the data)  
 +    Collected "all from the same pasture, and picked on the same day and measured at the same time by the same person with the same apparatus"  
 * Fisher developed a linear discriminant model to distinguish among the species  
 * Iris data set contained in the {datasets} package in R   
-+   (iris) or (iris3) [learn about the difference between format here ](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/iris.html)  
++   (iris) or (iris3) [learn about the difference in format of these datasets here ](https://stat.ethz.ch/R-manual/R-devel/library/datasets/html/iris.html)  
 
 ![ ](http://blogs.sas.com/content/jmp/files/2013/01/RA_Fisher.jpg)  
 Ronald Fisher thinking about discriminant analysis...   
+  
 ##LDA vs QDA  
 Now with the iris data set we can repeat what we did with the camelids and run a linear discriminant analysis on our data.  
 ```{r}
